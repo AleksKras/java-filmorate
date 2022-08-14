@@ -4,30 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@RequestMapping("/users")
 @Slf4j
-public class UserController {
-    private final Map<Integer, User> users = new HashMap();
-    private int id;
+public class UserController extends Controller<User> {
 
-    @GetMapping("/users")
-    public List<User> findAll() {
-        ArrayList<User> usersList = new ArrayList<>();
-        for (User user : users.values()) {
-            usersList.add(user);
-        }
-        log.info("Получен GET запрос к эндпоинту: /users");
-        log.info("Ответ: " + usersList);
-        return usersList;
+    @GetMapping()
+    public List<User> getAll() {
+        return findAll();
     }
 
-    @PostMapping(value = "/users")
+    @PostMapping()
     public User create(@Valid @RequestBody User user) {
         log.info("Получен Post запрос к эндпоинту: /users");
         if (user.getName().isEmpty()) {
@@ -36,17 +27,16 @@ public class UserController {
         }
         id++;
         user.setId(id);
-        users.put(id, user);
+        items.put(id, user);
         return user;
     }
 
-    @PutMapping(value = "/users")
+    @PutMapping()
     public User update(@Valid @RequestBody User user) {
-        log.info("Получен Put запрос к эндпоинту: /users");
-        log.info("Обновление пользователя:" + user.getId());
-        log.info("Данные пользователя:" + user);
-        if (users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
+        log.info("Получен Put запрос к эндпоинту: /users. Обновление пользователя:" + user.getId()
+                + ". Данные пользователя:" + user);
+        if (items.containsKey(user.getId())) {
+            items.put(user.getId(), user);
         } else {
             throw new ValidationException("Пользователь с ID=" + user.getId() + "не найден");
         }

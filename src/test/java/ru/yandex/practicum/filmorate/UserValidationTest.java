@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
+import org.junit.jupiter.api.DisplayName;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest {
     @Test
-    void ShouldCreateUser() {
+    void shouldCreateUser() {
         User user = new User(0, "test@yandex.ru", "TestLogin", "TestName", LocalDate.of(1990, 1, 1));
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
@@ -26,8 +27,9 @@ public class UserValidationTest {
     }
 
     @Test
-    void ShouldCreateUserWithWrongEmail() {
-        User user = new User(0, "test", "TestLogin", "TestName", LocalDate.of(1990, 1, 1));
+    @DisplayName("Тест валидации неправльного Email")
+    void shouldCreateUserWithWrongEmail() {
+        User user = new User(0, "test   ", "TestLogin", "TestName", LocalDate.of(1990, 1, 1));
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -35,8 +37,9 @@ public class UserValidationTest {
     }
 
     @Test
-    void ShouldCreateUserWithWrongLogin() {
-        User user = new User(0, "test@yandex.rr", "", "TestName", LocalDate.of(1990, 1, 1));
+    @DisplayName("Тест валидации неправльного Login")
+    void shouldCreateUserWithWrongLogin() {
+        User user = new User(0, "test@yandex.rr", " ", "TestName", LocalDate.of(1990, 1, 1));
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -44,7 +47,8 @@ public class UserValidationTest {
     }
 
     @Test
-    void ShouldCreateUserWithWrongBirthday() {
+    @DisplayName("Тест валидации неправльного Birthday")
+    void shouldCreateUserWithWrongBirthday() {
         User user = new User(0, "test@yandex.rr", "", "TestName", LocalDate.of(2990, 1, 1));
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();

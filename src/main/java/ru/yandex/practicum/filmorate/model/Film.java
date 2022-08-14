@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class Film {
     public final static int DESCRIPTION_MAX_LENGTH = 200;
     public final static LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+
     private int id;
     @NotBlank
     private String name;
@@ -20,14 +21,4 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-
-    public void validate() {
-        if (description.length() > DESCRIPTION_MAX_LENGTH) {
-            throw new ValidationException("Длина поля description=" + description.length() + ", максимальная длина = " +
-                    DESCRIPTION_MAX_LENGTH);
-        }
-        if (releaseDate.isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("Ошибка в поле releaseDate");
-        }
-    }
 }

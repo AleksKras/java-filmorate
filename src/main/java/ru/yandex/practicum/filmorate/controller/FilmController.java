@@ -4,51 +4,52 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@RequestMapping("/films")
 @Slf4j
-public class FilmController {
-    private final Map<Integer, Film> films = new HashMap();
-    private int id;
+public class FilmController extends Controller<Film>{
 
-    @GetMapping("/films")
-    public List<Film> findAll() {
-        log.info("Получен GET запрос к эндпоинту: /films");
-        ArrayList<Film> filmsList = new ArrayList<>();
-        for (Film film : films.values()) {
-            filmsList.add(film);
-        }
-        log.info("Ответ: " + filmsList);
-        return filmsList;
+    @GetMapping()
+    public List<Film> getAll() {
+        return findAll();
     }
 
-    @PostMapping(value = "/films")
+    @PostMapping()
     public Film create(@Valid @RequestBody Film film) {
         log.info("Получен Post запрос к эндпоинту: /films");
-        film.validate();
+        validate(film);
         id++;
         film.setId(id);
-        films.put(id, film);
+        items.put(id, film);
         return film;
     }
 
-    @PutMapping(value = "/films")
+    @PutMapping()
     public Film update(@Valid @RequestBody Film film) {
         log.info("Получен Put запрос к эндпоинту: /films");
         log.info("Обновление фильма:" + film.getId());
         log.info("Данные фильма:" + film);
-        film.validate();
+        validate(film);
         int filmId = film.getId();
-        if (films.containsKey(filmId)) {
-            films.put(filmId, film);
+        if (items.containsKey(filmId)) {
+            items.put(filmId, film);
         } else {
-            throw new ValidationException("Пользователь с ID=" + filmId + "не найден");
+            throw new ValidationException("Пользователь с ID=" + filmId + " не найден");
         }
         return film;
+    }
+
+    public static void validate(Film film) {
+        if (film.getDescription().length() > Film.DESCRIPTION_MAX_LENGTH) {
+            throw new ValidationException("Длина поля description=" + film.getDescription().length() +
+                    ", максимальная длина = " + Film.DESCRIPTION_MAX_LENGTH);
+        }
+        if (film.getReleaseDate().isBefore(Film.MIN_RELEASE_DATE)) {
+            throw new ValidationException("Ошибка в поле releaseDate");
+        }
     }
 }
