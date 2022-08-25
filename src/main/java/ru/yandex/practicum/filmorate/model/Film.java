@@ -2,11 +2,11 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +21,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
+    private HashSet<Integer> likes;
 }

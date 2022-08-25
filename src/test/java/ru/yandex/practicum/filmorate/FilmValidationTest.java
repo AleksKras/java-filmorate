@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+/*package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class FilmValidationTest {
     }
 
     @Test
-    @DisplayName("Тест валидации неправльного Name")
+    @DisplayName("Тест валидации неправильного Name")
     void shouldCreateFilmWithWrongName() {
         Film film = new Film(0, "", "Test description", LocalDate.of(1990, 1, 1), 100);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -96,3 +96,4 @@ public class FilmValidationTest {
         }
     }
 }
+*/
