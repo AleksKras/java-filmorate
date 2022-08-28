@@ -9,11 +9,11 @@ import java.util.*;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final Map<Integer, Film> films = new HashMap();
-    private int id;
+    private final Map<Long, Film> films = new HashMap();
+    private long id;
 
-    public List<Film> getAll() {
-        ArrayList<Film> filmList = new ArrayList<>();
+    public Set<Film> getAll() {
+        Set<Film> filmList = new HashSet<Film>();
         for (Film item : films.values()) {
             filmList.add(item);
         }
@@ -25,7 +25,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         id++;
         film.setId(id);
         if (film.getLikes() == null) {
-            film.setLikes(new HashSet<Integer>());
+            film.setLikes(new HashSet<Long>());
         }
         films.put(id, film);
         return film;
@@ -33,10 +33,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film update(Film film) {
         validate(film);
-        int filmId = film.getId();
+        long filmId = film.getId();
         if (films.containsKey(filmId)) {
             if (film.getLikes() == null) {
-                film.setLikes(new HashSet<Integer>());
+                film.setLikes(new HashSet<Long>());
             }
             films.put(filmId, film);
         } else {
@@ -55,7 +55,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
-    public Film getFilmById(int id) {
+    public Film getFilmById(long id) {
         if (films.containsKey(id)) {
             return films.get(id);
         } else {

@@ -33,19 +33,19 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public void addFriend(int userId, int friendId) {
+    public void addFriend(long userId, long friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        HashSet<Integer> userFriends = user.getFriends();
+        HashSet<Long> userFriends = user.getFriends();
         userFriends.add(friendId);
-        HashSet<Integer> friendFriends = friend.getFriends();
+        HashSet<Long> friendFriends = friend.getFriends();
         friendFriends.add(userId);
     }
 
-    public void deleteFriend(int userId, int friendId) {
+    public void deleteFriend(long userId, long friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        HashSet<Integer> userFriends = user.getFriends();
+        HashSet<Long> userFriends = user.getFriends();
         userFriends.remove(friendId);
         user.setFriends(userFriends);
         userFriends = friend.getFriends();
@@ -53,14 +53,13 @@ public class UserService {
         friend.setFriends(userFriends);
     }
 
-    public List<User> getAllFriends(int id) {
+    public List<User> getAllFriends(long id) {
         ArrayList<User> userList = new ArrayList<>();
         User user = userStorage.getUserById(id);
-        for (Integer friendId : user.getFriends()) {
+        for (Long friendId : user.getFriends()) {
             userList.add(userStorage.getUserById(friendId));
         }
         return userList;
-
     }
 
     public List<User> findAll() {
@@ -68,21 +67,21 @@ public class UserService {
         return userStorage.getAll();
     }
 
-    public User getUser(int id) {
+    public User getUser(long id) {
         return userStorage.getUserById(id);
     }
 
-    public List<User> getCommonFriend(int userId, int friendId) {
+    public List<User> getCommonFriend(long userId, long friendId) {
         ArrayList<User> userList = new ArrayList<>();
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        HashSet<Integer> userFriends = user.getFriends();
-        HashSet<Integer> friendFriends = friend.getFriends();
-        HashSet<Integer> commonFriends;
+        HashSet<Long> userFriends = user.getFriends();
+        HashSet<Long> friendFriends = friend.getFriends();
+        HashSet<Long> commonFriends;
         if (!(userFriends == null || friendFriends == null)) {
-            commonFriends = (HashSet<Integer>) friendFriends.clone();
+            commonFriends = (HashSet<Long>) friendFriends.clone();
             commonFriends.retainAll(userFriends);
-            for (Integer commonId : commonFriends) {
+            for (Long commonId : commonFriends) {
                 userList.add(userStorage.getUserById(commonId));
             }
         }

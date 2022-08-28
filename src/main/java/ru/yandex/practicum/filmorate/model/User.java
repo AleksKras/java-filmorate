@@ -13,7 +13,7 @@ import java.util.HashSet;
 @Data
 @AllArgsConstructor
 public class User {
-    private int id;
+    private long id;
     @NotBlank
     @Email
     private String email;
@@ -22,5 +22,5 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
-    private HashSet<Integer> friends;
+    private HashSet<Long> friends;
 }

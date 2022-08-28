@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.service.film;
 
-import jdk.jshell.execution.FailOverExecutionControlProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
@@ -12,7 +11,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +34,7 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
-    public List<Film> findAll() {
+    public Set<Film> findAll() {
         log.info("Получен запрос на список всех фильмов");
         return filmStorage.getAll();
     }
@@ -44,27 +43,27 @@ public class FilmService {
         return filmStorage.getFilmById(id);
     }
 
-    public void addLike(int filmId, int userId) {
+    public void addLike(int filmId, long userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userService.getUser(userId);
-        HashSet<Integer> likes = film.getLikes();
+        HashSet<Long> likes = film.getLikes();
         likes.add(userId);
     }
 
     public void deleteLike(int filmId, int userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userService.getUser(userId);
-        HashSet<Integer> likes = film.getLikes();
+        HashSet<Long> likes = film.getLikes();
         likes.remove(userId);
     }
 
-    public List<Film> getPopularFilms(int count) {
-        List<Film> films = filmStorage.getAll();
+    public Set<Film> getPopularFilms(int count) {
+        Set<Film> films = filmStorage.getAll();
         return films.stream().sorted((film0, film1) -> {
             Integer likeFilm0Size = film0.getLikes().size();
             Integer likeFilm1Size = film1.getLikes().size();
             int comp = likeFilm1Size.compareTo(likeFilm0Size);
             return comp;
-        }).limit(count).collect(Collectors.toList());
+        }).limit(count).collect(Collectors.toSet());
     }
 }

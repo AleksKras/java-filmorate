@@ -11,14 +11,14 @@ import java.util.*;
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage{
-    private final Map<Integer, User> users = new HashMap();
-    private int id;
+    private final Map<Long, User> users = new HashMap();
+    private long id;
 
     public User create(User user) {
         id++;
         user.setId(id);
         if (user.getFriends() == null) {
-            user.setFriends(new HashSet<Integer>());
+            user.setFriends(new HashSet<Long>());
         }
         users.put(id, user);
         return user;
@@ -26,7 +26,7 @@ public class InMemoryUserStorage implements UserStorage{
 
     public User update(@Valid User user) {
         if (users.containsKey(user.getId())) {
-            if (user.getFriends() == null) {user.setFriends(new HashSet<Integer>());}
+            if (user.getFriends() == null) {user.setFriends(new HashSet<Long>());}
             users.put(user.getId(), user);
         } else {
             throw new NotFoundException("Пользователь с ID=" + user.getId() + "не найден");
@@ -34,7 +34,7 @@ public class InMemoryUserStorage implements UserStorage{
         return user;
     }
 
-    public User getUserById(int id) {
+    public User getUserById(long id) {
         if (users.containsKey(id)) {
             return users.get(id);
         } else {
