@@ -7,11 +7,13 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.HashSet;
+
 
 @Data
 @AllArgsConstructor
 public class User {
-    private int id;
+    private long id;
     @NotBlank
     @Email
     private String email;
@@ -20,4 +22,5 @@ public class User {
     private String name;
     @Past
     private LocalDate birthday;
+    private HashSet<Long> friends;
 }
