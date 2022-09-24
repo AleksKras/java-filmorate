@@ -7026,3 +7026,7 @@ DROP TABLE "films_likes", "users", "films", "users_relation", "genres", "ratings
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "film_genre" не найдена
 Table "film_genre" not found; SQL statement:
 insert into "film_genre"("film_id", "genre_id") values (?, ?) [42102-214]
+2022-09-24 18:19:15 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Синтаксическая ошибка в выражении SQL "truncate [*]""genres"" truncate ""ratings"" insert into ""genres"" (""name"") values('Комедия')"; ожидалось "TABLE"
+Syntax error in SQL statement "truncate [*]""genres"" truncate ""ratings"" insert into ""genres"" (""name"") values('Комедия')"; expected "TABLE"; SQL statement:
+truncate "genres" truncate "ratings" insert into "genres" ("name") values('Комедия') [42001-214]

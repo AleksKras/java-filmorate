@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
-    public Set<Film> findAll() {
+    public List<Film> findAll() {
         log.info("Получен запрос на список всех фильмов");
         return filmStorage.getAll();
     }
@@ -55,7 +56,7 @@ public class FilmService {
     }
 
     public Set<Film> getPopularFilms(int count) {
-        Set<Film> films = filmStorage.getAll();
+        List<Film> films = filmStorage.getAll();
         return films.stream().sorted((film0, film1) -> {
             Integer likeFilm0Size = film0.getLikes().size();
             Integer likeFilm1Size = film1.getLikes().size();

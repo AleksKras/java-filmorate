@@ -25,8 +25,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         this.userService = userService;
     }
 
-    public Set<Film> getAll() {
-        Set<Film> filmList = new HashSet<Film>();
+    public List<Film> getAll() {
+        List<Film> filmList = new ArrayList<Film>();
         for (Film item : films.values()) {
             filmList.add(item);
         }

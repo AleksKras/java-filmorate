@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS "films_likes", "users", "films", "users_relation",  "genres", "ratings", "film_genres"; 
+
 CREATE TABLE IF NOT EXISTS "users" (
                          "id" SERIAL PRIMARY KEY,
                          "email" varchar,

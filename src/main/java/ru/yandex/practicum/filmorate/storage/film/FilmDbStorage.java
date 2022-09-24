@@ -145,16 +145,19 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private List<Film> getAllFilms() {
-        String sqlQuery = "select * from \"films\"";
+    public List<Film> getAll() {
+        String sqlQuery = "select * from \"films\" order by \"id\"";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
 
-    @Override
+    /*@Override
     public Set<Film> getAll() {
         HashSet<Film> films = new HashSet<>(getAllFilms());
+        for (Film film : films) {
+            log.info(String.valueOf(film.getId()));
+        }
         return films;
-    }
+    }*/
 
     private List<Integer> getGenresId(long id) {
         String sqlQuery = "select * from \"film_genres\" where \"film_id\" = ? order by \"genre_id\"";
