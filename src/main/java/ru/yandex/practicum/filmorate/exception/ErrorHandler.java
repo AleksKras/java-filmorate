@@ -25,5 +25,4 @@ public class ErrorHandler {
     public String handleThrowable(final Throwable e) {
         return e.getMessage();
     }
-
 }

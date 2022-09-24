@@ -1,16 +1,29 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.*;
 
 @Component
+@Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap();
     private long id;
+    @Qualifier("userStorage")
+    private final UserService userService;
+
+    @Autowired
+    public InMemoryFilmStorage(UserService userService) {
+        this.userService = userService;
+    }
 
     public Set<Film> getAll() {
         Set<Film> filmList = new HashSet<Film>();
@@ -56,11 +69,26 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film getFilmById(long id) {
+        log.info("Тут20000");
         if (films.containsKey(id)) {
             return films.get(id);
         } else {
             throw new NotFoundException("Фильм с ID=" + id + "не найден");
         }
+    }
+
+    public void addLike(long filmId, long userId) {
+        Film film = getFilmById(filmId);
+        User user = userService.getUser(userId);
+        HashSet<Long> likes = film.getLikes();
+        likes.add(userId);
+    }
+
+    public void deleteLike(long filmId, long userId) {
+        Film film = getFilmById(filmId);
+        User user = userService.getUser(userId);
+        HashSet<Long> likes = film.getLikes();
+        likes.remove(userId);
     }
 
 }
