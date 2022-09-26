@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -65,19 +66,10 @@ public class UserDbStorage implements UserStorage {
     }
 
     public User getUserById(long id) {
-        // выполняем запрос к базе данных.
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from \"users\" where \"id\" = ?", id);
-
-        // обрабатываем результат выполнения запроса
-        if (userRows.next()) {
-            HashSet<Long> friendSet= new HashSet<>(getFriends(userRows.getLong("id")));
-            User user = new User(
-                    userRows.getLong("id"),
-                    userRows.getString("email"),
-                    userRows.getString("login"),
-                    userRows.getString("name"),
-                    userRows.getDate("birthday").toLocalDate(),
-                    friendSet);
+        String sqlQuery = "select * from \"users\" where \"id\" = ?";
+        List<User> users = jdbcTemplate.query(sqlQuery, this::mapRowToUser, id);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
             log.info("Найден пользователь: {} {}", user.getId(), user.getName());
             return user;
         } else {

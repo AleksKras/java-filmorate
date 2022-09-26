@@ -1,2 +1,4 @@
 # java-filmorate
-Template repository for Filmorate project.
+Ñץולא ÁÄ
+![This is an image](https://github.com/AleksKras/java-filmorate/blob/main/src/main/resources/Filmorate.png)
+

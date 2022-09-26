@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS "films_likes", "users", "films", "users_relation",  "genres
 
 CREATE TABLE IF NOT EXISTS "users" (
                          "id" SERIAL PRIMARY KEY,
-                         "email" varchar,
-                         "login" varchar,
+                         "email" varchar(50) NOT NULL,
+                         "login" varchar NOT NULL,
                          "name" varchar,
                          "birthday" date,
                          PRIMARY KEY ("id")
@@ -11,22 +11,22 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "genres" (
                           "id" SERIAL PRIMARY KEY,
-                          "name" varchar
+                          "name" varchar(50)
 );
 
 CREATE TABLE IF NOT EXISTS "ratings" (
                            "id" SERIAL PRIMARY KEY,
-                           "name" varchar,
-                           "description" varchar
+                           "name" varchar (50),
+                           "description" varchar(200)
 );
 
 CREATE TABLE IF NOT EXISTS "films" (
                          "id" SERIAL PRIMARY KEY,
-                         "name" varchar,
-                         "description" varchar,
-                         "release_date" date,
+                         "name" varchar(50) NOT NULL,
+                         "description" varchar(200),
+                         "release_date" date NOT NULL,
                          "duration" int,
-                         "rating_id" int REFERENCES "ratings" ("id"),
+                         "rating_id" int REFERENCES "ratings" ("id") NOT NULL,
                          PRIMARY KEY ("id")
 );
 

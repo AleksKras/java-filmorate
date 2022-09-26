@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,23 +30,17 @@ import java.util.Set;
 
 @Slf4j
 @Component("filmStorage")
+@RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
+    @Autowired
     private final JdbcTemplate jdbcTemplate;
-    @Qualifier("genreStorage")
+    @Autowired
     private final GenreStorage genreStorage;
-    @Qualifier("mpaStorage")
+    @Autowired
     private final MpaStorage mpaStorage;
 
     @Qualifier("userStorage")
     private final UserStorage userStorage;
-
-    @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreStorage genreStorage, MpaStorage mpaStorage, UserStorage userStorage) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.genreStorage = genreStorage;
-        this.mpaStorage = mpaStorage;
-        this.userStorage = userStorage;
-    }
 
     public Film create(Film film) {
         String sqlQuery = "insert into \"films\"(\"name\", \"description\", \"release_date\", \"duration\", \"rating_id\") " +
@@ -120,24 +115,11 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public Film getFilmById(long id) {
-        // выполняем запрос к базе данных.
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("select * from \"films\" where \"id\" = ?", id);
-        // обрабатываем результат выполнения запроса
-        if (filmRows.next()) {
-            long filmId = filmRows.getLong("id");
-            HashSet<Genre> genres = new HashSet<>(getListGenres(filmId));
-            HashSet<Long> likes = new HashSet<>(getLikes(filmId));
-            Mpa mpa = mpaStorage.getMpaById(filmRows.getInt("rating_id"));
-            Film film = new Film(
-                    filmId,
-                    filmRows.getString("name"),
-                    filmRows.getString("description"),
-                    filmRows.getDate("release_date").toLocalDate(),
-                    filmRows.getInt("duration"),
-                    mpa,
-                    genres,
-                    likes);
-            log.info("Найден филь: {} {}", film.getId(), film.getName());
+        String sqlQuery = "select * from \"films\" where \"id\" = ?";
+        List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id);
+        if (!films.isEmpty()) {
+            Film film = films.get(0);
+            log.info("Найден фильм: {} {}", film.getId(), film.getName());
             return film;
         } else {
             log.info("Фильм с идентификатором {} не найден.", id);
@@ -149,15 +131,6 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "select * from \"films\" order by \"id\"";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
-
-    /*@Override
-    public Set<Film> getAll() {
-        HashSet<Film> films = new HashSet<>(getAllFilms());
-        for (Film film : films) {
-            log.info(String.valueOf(film.getId()));
-        }
-        return films;
-    }*/
 
     private List<Integer> getGenresId(long id) {
         String sqlQuery = "select * from \"film_genres\" where \"film_id\" = ? order by \"genre_id\"";
@@ -222,6 +195,4 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "delete from \"films_likes\" where \"film_id\" = ? and \"user_id\" = ?";
         jdbcTemplate.update(sqlQuery, filmId, userId);
     }
-
-
 }
