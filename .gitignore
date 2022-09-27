@@ -20,7 +20,7 @@ target/
 *.ipr
 
 #DB
-*.db
+#*.db
 
 ### NetBeans ###
 /nbproject/private/
