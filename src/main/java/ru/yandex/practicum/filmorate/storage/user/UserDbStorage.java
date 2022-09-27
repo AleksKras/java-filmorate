@@ -110,7 +110,6 @@ public class UserDbStorage implements UserStorage {
     private Long mapRowToFriendId(ResultSet resultSet, int rowNum) throws SQLException {
         return resultSet.getLong("friend_id");
     }
-
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         HashSet<Long> friendSet= new HashSet<>(getFriends(resultSet.getLong("id")));
         return User.builder()

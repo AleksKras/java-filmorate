@@ -21,6 +21,7 @@ target/
 
 #DB
 #*.db
+#/db
 
 ### NetBeans ###
 /nbproject/private/
