@@ -1,12 +1,15 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -19,14 +22,12 @@ import java.time.ZoneId;
 import java.util.*;
 
 
-@Component("userStorage")
+@Component
 @Slf4j
+@RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
+    @Autowired
     private final JdbcTemplate jdbcTemplate;
-
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     public User create(User user) {
         String sqlQuery = "insert into \"users\"(\"email\", \"login\", \"name\", \"birthday\") " +
@@ -67,7 +68,7 @@ public class UserDbStorage implements UserStorage {
 
     public User getUserById(long id) {
         String sqlQuery = "select * from \"users\" where \"id\" = ?";
-        List<User> users = jdbcTemplate.query(sqlQuery, this::mapRowToUser, id);
+        List<User> users = jdbcTemplate.query(sqlQuery, new UserMapper(this), id);
         if (!users.isEmpty()) {
             User user = users.get(0);
             log.info("Найден пользователь: {} {}", user.getId(), user.getName());
@@ -80,7 +81,7 @@ public class UserDbStorage implements UserStorage {
 
     public List<User> getAll() {
         String sqlQuery = "select * from \"users\"";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
+        return jdbcTemplate.query(sqlQuery, new UserMapper(this));
     }
 
     public void addFriend(long userId, long friendId) {
@@ -103,23 +104,13 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
-    private List<Long> getFriends(long id) {
+    public List<Long> getFriends(long id) {
         String sqlQuery = "select * from \"users_relation\" where \"user_id\" = ?";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFriendId, id);
     }
+
     private Long mapRowToFriendId(ResultSet resultSet, int rowNum) throws SQLException {
         return resultSet.getLong("friend_id");
-    }
-    private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
-        HashSet<Long> friendSet= new HashSet<>(getFriends(resultSet.getLong("id")));
-        return User.builder()
-                .id(resultSet.getLong("id"))
-                .email(resultSet.getString("email"))
-                .login(resultSet.getString("login"))
-                .name(resultSet.getString("name"))
-                .birthday(resultSet.getDate("birthday").toLocalDate())
-                .friends(friendSet)
-                .build();
     }
 
 }

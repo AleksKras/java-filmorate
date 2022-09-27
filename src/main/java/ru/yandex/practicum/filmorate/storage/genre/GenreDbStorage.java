@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.genre;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -12,13 +14,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Slf4j
-@Component("GenreStorage")
+@Component
+@RequiredArgsConstructor
 public class GenreDbStorage implements GenreStorage{
-    private final JdbcTemplate jdbcTemplate;
 
-    public GenreDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Genre getGenreById(int id) {
@@ -43,5 +44,4 @@ public class GenreDbStorage implements GenreStorage{
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
         return new Genre(resultSet.getInt("id"), resultSet.getString("name"));
     }
-    
 }

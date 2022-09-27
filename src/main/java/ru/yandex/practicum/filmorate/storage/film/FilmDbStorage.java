@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@Component("filmStorage")
+@Component
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     @Autowired
@@ -39,7 +40,7 @@ public class FilmDbStorage implements FilmStorage {
     @Autowired
     private final MpaStorage mpaStorage;
 
-    @Qualifier("userStorage")
+    @Autowired
     private final UserStorage userStorage;
 
     public Film create(Film film) {
@@ -116,7 +117,7 @@ public class FilmDbStorage implements FilmStorage {
 
     public Film getFilmById(long id) {
         String sqlQuery = "select * from \"films\" where \"id\" = ?";
-        List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id);
+        List<Film> films = jdbcTemplate.query(sqlQuery, new FilmMapper(this, mpaStorage), id);
         if (!films.isEmpty()) {
             Film film = films.get(0);
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
@@ -129,7 +130,7 @@ public class FilmDbStorage implements FilmStorage {
 
     public List<Film> getAll() {
         String sqlQuery = "select * from \"films\" order by \"id\"";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+        return jdbcTemplate.query(sqlQuery, new FilmMapper(this, mpaStorage));
     }
 
     private List<Integer> getGenresId(long id) {
@@ -137,7 +138,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenresId, id);
     }
 
-    private List<Genre> getListGenres(long filmId) {
+    public List<Genre> getListGenres(long filmId) {
         ArrayList<Genre> genres = new ArrayList<>();
         List<Integer> genresId = getGenresId(filmId);
         for (Integer genreId : genresId) {
@@ -146,7 +147,7 @@ public class FilmDbStorage implements FilmStorage {
         return genres;
     }
 
-    private List<Long> getLikes(long id) {
+    public List<Long> getLikes(long id) {
         String sqlQuery = "select * from \"films_likes\" where \"film_id\" = ?";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUserId, id);
     }
@@ -158,21 +159,6 @@ public class FilmDbStorage implements FilmStorage {
 
     private Long mapRowToUserId(ResultSet resultSet, int rowNum) throws SQLException {
         return resultSet.getLong("user_id");
-    }
-
-    private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
-        long filmId = resultSet.getLong("id");
-        HashSet<Genre> genresSet = new HashSet<>(getListGenres(filmId));
-        HashSet<Long> likesSet = new HashSet<>(getLikes(filmId));
-        return Film.builder().id(resultSet.getLong("id"))
-                .name(resultSet.getString("name"))
-                .description(resultSet.getString("description"))
-                .releaseDate(resultSet.getDate("release_date").toLocalDate())
-                .duration(resultSet.getInt("duration"))
-                .genres(genresSet)
-                .likes(likesSet)
-                .mpa(mpaStorage.getMpaById(resultSet.getInt("rating_id")))
-                .build();
     }
 
     public void addLike(long filmId, long userId) {

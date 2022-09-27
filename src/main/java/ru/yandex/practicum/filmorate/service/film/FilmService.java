@@ -18,17 +18,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class FilmService {
-    @Qualifier("filmStorage")
-    private final FilmStorage filmStorage;
-    @Qualifier("userStorage")
-    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
-    }
+    private final FilmStorage filmStorage;
+    @Autowired
+    private final UserService userService;
 
     public Film create(@Valid Film film) {
         return filmStorage.create(film);

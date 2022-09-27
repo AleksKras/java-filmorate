@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.mpa;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -12,13 +14,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Slf4j
-@Component("mpaStorage")
+@Component
+@RequiredArgsConstructor
 public class MpaDbStorage implements MpaStorage {
-    private final JdbcTemplate jdbcTemplate;
 
-    public MpaDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    @Autowired
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Mpa getMpaById(int id) {
@@ -44,5 +45,4 @@ public class MpaDbStorage implements MpaStorage {
     private Mpa mapRowToMpa(ResultSet resultSet, int rowNum) throws SQLException {
         return new Mpa(resultSet.getInt("id"), resultSet.getString("name"),resultSet.getString("description"));
     }
-
 }

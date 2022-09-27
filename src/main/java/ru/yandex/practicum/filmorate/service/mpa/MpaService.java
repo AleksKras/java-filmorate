@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service.mpa;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,15 +12,11 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MpaService {
 
-    @Qualifier("mpaStorage")
-    private final MpaStorage mpaStorage;
-
     @Autowired
-    public MpaService(MpaStorage mpaStorage) {
-        this.mpaStorage = mpaStorage;
-    }
+    private final MpaStorage mpaStorage;
 
     public List<Mpa> findAll() {
         log.info("Получен запрос на список всех жанров");
